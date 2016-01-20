@@ -141,8 +141,11 @@ $ua=getBrowser();
 
 
 $user_os        =   getOS();
-# $tags = get_meta_tags('http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=' . $_SERVER['REMOTE_ADDR']);
-
+#$tags = get_meta_tags('http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=' . $_SERVER['REMOTE_ADDR']);
+$os_arch = strlen(decbin(~0));
+//$isp_hostname = gethostbyaddr($_SERVER['remote_addr']);
+$ip = $_SERVER['REMOTE_ADDR'];
+    $fullhost = gethostbyaddr($ip);
 
 # More info on GeoIP: http://www.geobytes.com/get-city-details-api/
 function getIP() {
@@ -160,25 +163,30 @@ function getIP() {
 $tags=json_decode(file_get_contents('http://getcitydetails.geobytes.com/GetCityDetails?fqcn='. getIP()), true);
 if($tags['geobyteslocationcode']!='')
 
-
-#$json = file_get_contents('http://getcitydetails.geobytes.com/GetCityDetails?&fqcn=' . $_SERVER['REMOTE_ADDR']);
-$os_arch = strlen(decbin(~0));
-//$isp_hostname = gethostbyaddr($_SERVER['remote_addr']);
-$ip = $_SERVER['REMOTE_ADDR'];
-    $fullhost = gethostbyaddr($ip);
 //    $host = preg_replace("/^[^.]+./", "", $fullhost);
 
 $device_details =   "
-IP Address: ".$remote_addr."
-Location: ".$tags['geobytescity'].", ".$tags['geobytesregion'].", ".$tags['geobytescountry']."
-Host: ".$fullhost."
 
-Operating System: ".$user_os."
-Architecture: ".$os_arch." bit
-Browser: ".$ua['name']." / ".$ua['version']."
-User Agent: ".$ua['userAgent']."
+        <strong><u>Internet Connection</u></strong><br>
+        <strong>IP Address: </strong>".$remote_addr."<br>
+        <strong>Location: </strong>".$tags['geobytescity'].", ".$tags['geobytesregion'].", ".$tags['geobytescountry']."<br>
+        <strong>Host: </strong>".$fullhost."<br>
+        <br>
 
-";
+        <strong><u>Operating System</u></strong><br>
+        <strong>Operating System: </strong>".$user_os."<br>
+        <strong>Architecture: </strong>".$os_arch." bit<br>
+        <br>
+
+        <strong><u>Browser</u></strong><br>
+        <strong>Browser Name / Version: </strong>".$ua['name']." / ".$ua['version']."<br>
+        <strong>User Agent: </strong>".$ua['userAgent']." <br>
+	<br>
+	Welcome, ".$tags['geobytesnationalitysingular']." friends!<br>
+	<br>
+	Fun fact: <br>
+	The ".$tags['geobytesnationalityplural']." have a population of ".$tags['geobytespopulation']." and the capitol is ".$tags['geobytescapital'].".
+	";
 
 print_r($device_details);
 ?>
